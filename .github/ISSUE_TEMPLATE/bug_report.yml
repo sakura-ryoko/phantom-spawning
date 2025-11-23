@@ -51,15 +51,15 @@ body:
     attributes:
       label: Minecraft version
       description: The Minecraft version(s) where this bug occurs in.
-      placeholder: 1.15.2
+      placeholder: 1.14.4
     validations:
       required: true
   - type: input
     id: mod-version
     attributes:
-      label: TemplateMod version
-      description: The TemplateMod version(s) where this bug occurs in.
-      placeholder: 1.2.3
+      label: Phantom Spawning version
+      description: The Phantom Spawning version(s) where this bug occurs in.
+      placeholder: 0.1.0
     validations:
       required: true
   - type: textarea
