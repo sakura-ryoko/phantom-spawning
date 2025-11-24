@@ -38,6 +38,7 @@ import com.sakuraryoko.corelib.api.commands.IServerCommand;
 import com.sakuraryoko.corelib.impl.text.BuiltinTextHandler;
 import com.sakuraryoko.phantom_spawning.impl.PhantomSpawningMod;
 import com.sakuraryoko.phantom_spawning.impl.Reference;
+import com.sakuraryoko.phantom_spawning.impl.config.ConfigWrap;
 import com.sakuraryoko.phantom_spawning.impl.player.PlayerManager;
 
 import static net.minecraft.commands.Commands.argument;
@@ -58,9 +59,11 @@ public class PhantomSpawningCommand implements IServerCommand
 	{
 		dispatcher.register(
 				literal(this.getName())
+						.requires(cmdSrc -> cmdSrc.hasPermission(ConfigWrap.mainOpt().permission_level))
 						.executes(ctx -> this.about(ctx.getSource(), ctx))
-						.then(argument("tf", BoolArgumentType.bool())
-							.executes(ctx -> this.toggle(ctx.getSource(), BoolArgumentType.getBool(ctx, "tf"), ctx))
+						.then(argument("true_false", BoolArgumentType.bool())
+						    .requires(cmdSrc -> cmdSrc.hasPermission(ConfigWrap.mainOpt().permission_level))
+							.executes(ctx -> this.toggle(ctx.getSource(), BoolArgumentType.getBool(ctx, "true_false"), ctx))
 						)
 		);
 	}
@@ -80,7 +83,7 @@ public class PhantomSpawningCommand implements IServerCommand
 	private int about(CommandSourceStack src, CommandContext<CommandSourceStack> ctx)
 	{
 		final Component text = BuiltinTextHandler.getInstance().formatText(
-				"§ePlease use §b/"+ this.getName() +" <true|false>§e --\n§eTo Enable or disable Phantoms from Spawning.§r"
+				"§7Please use §b/"+ this.getName() +" <true|false>§7 --\n§7To Enable or disable Phantoms from Spawning.\n§7This setting is Per-User.§r"
 		);
 
 		//#if MC >= 12001
@@ -95,7 +98,7 @@ public class PhantomSpawningCommand implements IServerCommand
 			boolean status = PlayerManager.getInstance().getPhantomStatus(player.getGameProfile());
 
 			final Component text2 = BuiltinTextHandler.getInstance().formatText(
-					"§7Current status: "+ (status ? "§cSpawning Enabled" : "§aSpawning Disabled") + "§r"
+					"§eCurrent status: "+ (status ? "§cSpawning Enabled" : "§aSpawning Disabled") + "§r"
 			);
 
 			//#if MC >= 12001

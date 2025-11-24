@@ -25,6 +25,7 @@ import java.util.List;
 import com.google.gson.annotations.SerializedName;
 
 import com.sakuraryoko.corelib.api.config.IConfigData;
+import com.sakuraryoko.phantom_spawning.impl.config.data.options.MainOptions;
 import com.sakuraryoko.phantom_spawning.impl.config.data.options.PlayerOptions;
 import com.sakuraryoko.phantom_spawning.impl.modinit.PhantomSpawningInit;
 
@@ -35,6 +36,9 @@ public class PhantomSpawningData implements IConfigData
 
 	@SerializedName("config_date")
 	public String config_date;
+
+	@SerializedName("main")
+	public MainOptions MAIN = new MainOptions();
 
 	@SerializedName("players")
 	public List<PlayerOptions> PLAYERS = new ArrayList<>();

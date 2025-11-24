@@ -23,11 +23,17 @@ package com.sakuraryoko.phantom_spawning.impl.config;
 import java.util.List;
 import org.jetbrains.annotations.ApiStatus;
 
+import com.sakuraryoko.phantom_spawning.impl.config.data.options.MainOptions;
 import com.sakuraryoko.phantom_spawning.impl.config.data.options.PlayerOptions;
 
 @ApiStatus.Internal
 public class ConfigWrap
 {
+	public static MainOptions mainOpt()
+	{
+		return PhantomSpawningConfigHandler.getInstance().getConfig().MAIN;
+	}
+
 	public static List<PlayerOptions> players()
 	{
 		return PhantomSpawningConfigHandler.getInstance().getConfig().PLAYERS;

@@ -29,6 +29,7 @@ import com.sakuraryoko.corelib.api.time.TimeFormat;
 import com.sakuraryoko.phantom_spawning.impl.PhantomSpawningMod;
 import com.sakuraryoko.phantom_spawning.impl.Reference;
 import com.sakuraryoko.phantom_spawning.impl.config.data.PhantomSpawningData;
+import com.sakuraryoko.phantom_spawning.impl.config.data.options.MainOptions;
 import com.sakuraryoko.phantom_spawning.impl.modinit.PhantomSpawningInit;
 
 @ApiStatus.Internal
@@ -116,7 +117,7 @@ public class PhantomSpawningConfigHandler implements IConfigDispatch
 
 		// Set default values
 		config.config_date = TimeFormat.RFC1123.formatNow(null);
-//		config.MAIN.defaults();
+		config.MAIN = new MainOptions();
 
 		// Some of these are possibly in use; but remove them later if they are.
 		config.PLAYERS = new ArrayList<>();
@@ -136,7 +137,7 @@ public class PhantomSpawningConfigHandler implements IConfigDispatch
 		PhantomSpawningMod.debugLog("PhantomSpawningConfigHandler#update(): save_date: {} --> {}", newConf.config_date, CONFIG.config_date);
 
 		// Copy Main Config
-//		CONFIG.PLAYERS.copy(newConf.MAIN);
+		CONFIG.MAIN.copy(newConf.MAIN);
 
 		// Copy Incoming Config
 		CONFIG.PLAYERS.clear();

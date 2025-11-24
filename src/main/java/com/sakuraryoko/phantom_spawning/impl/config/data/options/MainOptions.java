@@ -18,13 +18,34 @@
  * along with Phantom Spawning.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.sakuraryoko.phantom_spawning.impl;
+package com.sakuraryoko.phantom_spawning.impl.config.data.options;
 
 import org.jetbrains.annotations.ApiStatus;
 
+import com.sakuraryoko.corelib.api.config.IConfigOption;
+
 @ApiStatus.Internal
-public class Reference
+public class MainOptions implements IConfigOption
 {
-	public static final String MOD_ID = "phantom-spawning";
-	public static final boolean DEBUG = false;
+	public int permission_level;
+
+	public MainOptions()
+	{
+		this.defaults();
+	}
+
+	@Override
+	public void defaults()
+	{
+		this.permission_level = 0;
+	}
+
+	@Override
+	public MainOptions copy(IConfigOption opt)
+	{
+		MainOptions opts = (MainOptions) opt;
+		this.permission_level = opts.permission_level;
+
+		return this;
+	}
 }

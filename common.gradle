@@ -71,7 +71,7 @@ dependencies {
 //    modImplementation include("me.lucko:fabric-permissions-api:${project.fabric_permissions_api_version}")
 }
 
-String MIXIN_CONFIG_PATH = 'phantom_spawning.mixins.json'
+String MIXIN_CONFIG_PATH = 'phantom-spawning.mixins.json'
 //String LANG_DIR = 'assets/phantom_spawning/lang'
 JavaVersion JAVA_COMPATIBILITY
 if (mcVersion >= 12005) {
