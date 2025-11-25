@@ -5,11 +5,11 @@
 
 Sakura's Phantom Spawning mod.  This allows each user to define their own Phantom Spawning status.
 
-## To use
+## To Use
 
-Type in the `/phantomspawning` command and then use the optional `True` or `False` parameter.
+Type in the `/phantomspawning` command and then use the optional `true` or `false` parameter.
 
-True [DEFAULT] means Phantoms will spawn,
-False means that they will not.
+**True** [_DEFAULT_] means Phantoms will spawn,
+**False** means that they will not.
 
-The saved players will then be saved to the `config/phantom_spawning.json` file.
+The saved players will then be saved to the `config/phantom-spawning.json` file.
