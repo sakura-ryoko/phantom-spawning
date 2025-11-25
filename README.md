@@ -1,4 +1,4 @@
-## phantom_spawning
+## phantom-spawning
 
 [![License](https://img.shields.io/github/license/Fallen-Breath/fabric-mod-template.svg)](http://www.gnu.org/licenses/lgpl-3.0.html)
 [![workflow](https://github.com/sakura-ryoko/phantom-spawning/actions/workflows/gradle.yml/badge.svg)](https://github.com/sakura-ryoko/phantom-spawning/actions/workflows/gradle.yml)
