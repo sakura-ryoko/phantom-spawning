@@ -17,10 +17,10 @@ repositories {
         url = 'https://maven.fallenbreath.me/releases'
     }
     maven {
-        url = "https://maven.nucleoid.xyz/"
+        url = "https://oss.sonatype.org/content/repositories/snapshots"
     }
     maven {
-        url = "https://oss.sonatype.org/content/repositories/snapshots"
+        url = "https://maven.nucleoid.xyz/"
     }
 }
 
@@ -48,7 +48,7 @@ dependencies {
 //		modRuntimeOnly(mcVersion < 11900 ? "com.github.astei:lazydfu:0.1.2" : "com.github.Fallen-Breath:lazydfu:a7cfc44c0c")
 //	}
 //	// [FEATURE] MIXIN_AUDITOR
-	modRuntimeOnly 'me.fallenbreath:mixin-auditor:0.1.0'
+//	modRuntimeOnly 'me.fallenbreath:mixin-auditor:0.1.0'
 
 	// dependencies
 	def fabricApiModules = ["fabric-resource-loader-v0"]
@@ -68,11 +68,13 @@ dependencies {
 
     // Mod Specific
     modImplementation include("com.github.sakura-ryoko.corelib:corelib-mc${project.minecraft_version}:${project.corelib_version}")
-//    modImplementation include("me.lucko:fabric-permissions-api:${project.fabric_permissions_api_version}")
+    if (project.fabric_permissions_api_version.size() > 0) {
+        modImplementation include("me.lucko:fabric-permissions-api:${project.fabric_permissions_api_version}")
+    }
 }
 
 String MIXIN_CONFIG_PATH = 'phantom-spawning.mixins.json'
-//String LANG_DIR = 'assets/phantom_spawning/lang'
+//String LANG_DIR = 'assets/phantom-spawning/lang'
 JavaVersion JAVA_COMPATIBILITY
 if (mcVersion >= 12005) {
 	JAVA_COMPATIBILITY = JavaVersion.VERSION_21
@@ -94,14 +96,14 @@ loom {
 		vmArgs commonVmArgs
 	}
 	// [FEATURE] MIXIN_AUDITOR
-	runs {
-		def auditVmArgs = [*commonVmArgs, '-DmixinAuditor.audit=true']
-		serverMixinAudit {
-			server()
-			vmArgs auditVmArgs
-			ideConfigGenerated false
-		}
-	}
+//	runs {
+//		def auditVmArgs = [*commonVmArgs, '-DmixinAuditor.audit=true']
+//		serverMixinAudit {
+//			server()
+//			vmArgs auditVmArgs
+//			ideConfigGenerated false
+//		}
+//	}
 }
 
 String modVersionSuffix = ''

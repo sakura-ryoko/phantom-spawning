@@ -35,10 +35,10 @@ import net.minecraft.server.level.ServerPlayer;
 //#endif
 
 import com.sakuraryoko.corelib.api.commands.IServerCommand;
-import com.sakuraryoko.corelib.impl.text.BuiltinTextHandler;
 import com.sakuraryoko.phantom_spawning.impl.PhantomSpawningMod;
 import com.sakuraryoko.phantom_spawning.impl.Reference;
 import com.sakuraryoko.phantom_spawning.impl.config.ConfigWrap;
+import com.sakuraryoko.phantom_spawning.impl.modinit.InitWrap;
 import com.sakuraryoko.phantom_spawning.impl.player.PlayerManager;
 
 import static net.minecraft.commands.Commands.argument;
@@ -59,11 +59,11 @@ public class PhantomSpawningCommand implements IServerCommand
 	{
 		dispatcher.register(
 				literal(this.getName())
-						.requires(cmdSrc -> cmdSrc.hasPermission(ConfigWrap.mainOpt().permission_level))
-						.executes(ctx -> this.about(ctx.getSource(), ctx))
+						.requires(PermsWrap.check(this.getNode()+".about", ConfigWrap.mainOpt().permission_level))
+						.executes(this::about)
 						.then(argument("true_false", BoolArgumentType.bool())
-						    .requires(cmdSrc -> cmdSrc.hasPermission(ConfigWrap.mainOpt().permission_level))
-							.executes(ctx -> this.toggle(ctx.getSource(), BoolArgumentType.getBool(ctx, "true_false"), ctx))
+						    .requires(PermsWrap.check(this.getNode()+".true_false", ConfigWrap.mainOpt().permission_level))
+							.executes(ctx -> this.toggle(ctx, BoolArgumentType.getBool(ctx, "true_false")))
 						)
 		);
 	}
@@ -80,9 +80,9 @@ public class PhantomSpawningCommand implements IServerCommand
 		return Reference.MOD_ID;
 	}
 
-	private int about(CommandSourceStack src, CommandContext<CommandSourceStack> ctx)
+	private int about(CommandContext<CommandSourceStack> ctx)
 	{
-		final Component text = BuiltinTextHandler.getInstance().formatText(
+		final Component text = InitWrap.text().formatText(
 				"§7Please use §b/"+ this.getName() +" <true|false>§7 --\n§7To Enable or disable Phantoms from Spawning.\n§7This setting is Per-User.§r"
 		);
 
@@ -94,10 +94,15 @@ public class PhantomSpawningCommand implements IServerCommand
 
 		try
 		{
-			ServerPlayer player = src.getPlayerOrException();
+			ServerPlayer player = ctx.getSource().getPlayerOrException();
 			boolean status = PlayerManager.getInstance().getPhantomStatus(player.getGameProfile());
 
-			final Component text2 = BuiltinTextHandler.getInstance().formatText(
+			if (InitWrap.debug())
+			{
+				PhantomSpawningMod.LOGGER.warn("CMD:about: from [{}]", player.getName().getString());
+			}
+
+			final Component text2 = InitWrap.text().formatText(
 					"§eCurrent status: "+ (status ? "§cSpawning Enabled" : "§aSpawning Disabled") + "§r"
 			);
 
@@ -109,22 +114,23 @@ public class PhantomSpawningCommand implements IServerCommand
 		}
 		catch (CommandSyntaxException err)
 		{
+			PhantomSpawningMod.LOGGER.warn("CMD:about: Syntax Error; {}", err.getLocalizedMessage());
 			return 0;
 		}
 
 		return 1;
 	}
 
-	private int toggle(CommandSourceStack src, boolean toggle, CommandContext<CommandSourceStack> ctx)
+	private int toggle(CommandContext<CommandSourceStack> ctx, boolean toggle)
 	{
 		try
 		{
-			ServerPlayer player = src.getPlayerOrException();
+			ServerPlayer player = ctx.getSource().getPlayerOrException();
 			PlayerManager.getInstance().setPhantomStatus(player.getGameProfile(), toggle);
 
 			final Component text = toggle
-			                 ? BuiltinTextHandler.getInstance().formatText("§cEnabled Phantom spawning.§r")
-			                 : BuiltinTextHandler.getInstance().formatText("§aDisabled Phantoms from spawning.§r");
+			                 ? InitWrap.text().formatText("§cEnabled Phantom spawning.§r")
+			                 : InitWrap.text().formatText("§aDisabled Phantoms from spawning.§r");
 
 			//#if MC >= 12001
 			//$$ ctx.getSource().sendSuccess(() -> text, false);
@@ -143,6 +149,7 @@ public class PhantomSpawningCommand implements IServerCommand
 		}
 		catch (CommandSyntaxException err)
 		{
+			PhantomSpawningMod.LOGGER.warn("CMD:toggle: Syntax Error; {}", err.getLocalizedMessage());
 			return 0;
 		}
 

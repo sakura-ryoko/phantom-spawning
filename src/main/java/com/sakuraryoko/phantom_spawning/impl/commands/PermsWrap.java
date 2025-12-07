@@ -18,37 +18,29 @@
  * along with Phantom Spawning.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.sakuraryoko.phantom_spawning.impl.config.data.options;
+package com.sakuraryoko.phantom_spawning.impl.commands;
 
-import org.jetbrains.annotations.ApiStatus;
+import java.util.function.Predicate;
 
-import com.sakuraryoko.corelib.api.config.IConfigOption;
+import javax.annotation.Nonnull;
 
-@ApiStatus.Internal
-public class MainOptions implements IConfigOption
+//#if MC >= 11605
+//$$ import me.lucko.fabric.api.permissions.v0.Permissions;
+//#endif
+
+import net.minecraft.commands.CommandSourceStack;
+
+/**
+ * (Lucko) Fabric Permissions API support only begins with MC 1.16.4+
+ */
+public class PermsWrap
 {
-	public int permission_level;
-	public boolean phantomDebug;
-
-	public MainOptions()
+	public static Predicate<CommandSourceStack> check(@Nonnull String node, int level)
 	{
-		this.defaults();
-	}
-
-	@Override
-	public void defaults()
-	{
-		this.permission_level = 0;
-		this.phantomDebug = false;
-	}
-
-	@Override
-	public MainOptions copy(IConfigOption opt)
-	{
-		MainOptions opts = (MainOptions) opt;
-		this.permission_level = opts.permission_level;
-		this.phantomDebug = opts.phantomDebug;
-
-		return this;
+//#if MC >= 11605
+//$$		return Permissions.require(node, level);
+//#else
+		return (src -> src.hasPermission(level));
+//#endif
 	}
 }

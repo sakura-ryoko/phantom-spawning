@@ -22,19 +22,22 @@ package com.sakuraryoko.phantom_spawning.impl;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.ApiStatus;
 
 import net.fabricmc.api.ModInitializer;
 
 import com.sakuraryoko.corelib.impl.modinit.ModInitManager;
+import com.sakuraryoko.phantom_spawning.impl.modinit.InitWrap;
 import com.sakuraryoko.phantom_spawning.impl.modinit.PhantomSpawningInit;
 
+@ApiStatus.Internal
 public class PhantomSpawningMod implements ModInitializer
 {
 	public static Logger LOGGER = LogManager.getLogger(Reference.MOD_ID);
 
 	public static void debugLog(String key, Object... args)
 	{
-		if (PhantomSpawningInit.getInstance().isDebug())
+		if (InitWrap.debug())
 		{
 			LOGGER.info(String.format("[DEBUG] %s", key), args);
 		}

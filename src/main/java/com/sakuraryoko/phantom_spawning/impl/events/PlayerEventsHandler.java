@@ -30,6 +30,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 
 import com.sakuraryoko.corelib.api.events.IPlayerEventsDispatch;
+import com.sakuraryoko.phantom_spawning.impl.PhantomSpawningMod;
+import com.sakuraryoko.phantom_spawning.impl.config.ConfigWrap;
 import com.sakuraryoko.phantom_spawning.impl.player.PlayerManager;
 
 @ApiStatus.Internal
@@ -94,21 +96,34 @@ public class PlayerEventsHandler implements IPlayerEventsDispatch
 
 	public Integer onCheckBypassInsomnia(@Nullable ServerPlayer player, Integer currentValue)
 	{
-		if (player == null) return currentValue;
+		if (player == null)
+		{
+			return currentValue;
+		}
 
 		if (!PlayerManager.getInstance().getPhantomStatus(player.getGameProfile()))
 		{
 			// Phantoms can only Spawn when the value is over 72000; and then has a random chance to hit.
 			if (currentValue >= 72000)
 			{
-//				PhantomSpawningMod.LOGGER.error("[DISABLED] Player: '{}' Was spared from phantom spawns.", player.getName().getString());
+				if (ConfigWrap.mainOpt().phantomDebug)
+				{
+					PhantomSpawningMod.LOGGER.info("[DISABLED] Player: '{}' may have been spared from phantom spawns. [{} -> 1]", player.getName().getString(), currentValue);
+				}
+
 				return 1;
 			}
 
-//			PhantomSpawningMod.LOGGER.error("[DISABLED] Player: '{}' -- Current Value: [{}]", player.getName().getString(), currentValue);
+			if (ConfigWrap.mainOpt().phantomDebug)
+			{
+				PhantomSpawningMod.LOGGER.info("[DISABLED] Player: '{}' -- Current Value: [{}]", player.getName().getString(), currentValue);
+			}
+		}
+		else if (ConfigWrap.mainOpt().phantomDebug)
+		{
+			PhantomSpawningMod.LOGGER.info("[ENABLED] Player: '{}' -- Current Value: [{}]", player.getName().getString(), currentValue);
 		}
 
-//		PhantomSpawningMod.LOGGER.warn("[ENABLED] Player: '{}' -- Current Value: [{}]", player.getName().getString(), currentValue);
 		return currentValue;
 	}
 }
