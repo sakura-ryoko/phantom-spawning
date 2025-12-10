@@ -21,13 +21,16 @@
 package com.sakuraryoko.phantom_spawning.impl.commands;
 
 import java.util.function.Predicate;
-
 import javax.annotation.Nonnull;
 
-//#if MC >= 11605
+//#if MC >= 1.16.5
 //$$ import me.lucko.fabric.api.permissions.v0.Permissions;
 //#endif
 
+//#if MC >= 1.21.11
+//$$ import net.minecraft.server.permissions.PermissionLevel;
+//$$ import net.minecraft.util.Mth;
+//#endif
 import net.minecraft.commands.CommandSourceStack;
 
 /**
@@ -37,7 +40,9 @@ public class PermsWrap
 {
 	public static Predicate<CommandSourceStack> check(@Nonnull String node, int level)
 	{
-//#if MC >= 11605
+//#if MC >= 1.21.11
+//$$		return Permissions.require(node, PermissionLevel.byId(Mth.clamp(level, 0, PermissionLevel.OWNERS.id())));
+//#elseif MC >= 1.16.5
 //$$		return Permissions.require(node, level);
 //#else
 		return (src -> src.hasPermission(level));

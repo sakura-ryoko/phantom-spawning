@@ -7,11 +7,11 @@ apply plugin: 'com.replaymod.preprocess'
 int mcVersion = project.mcVersion
 
 repositories {
+	maven {
+		url = 'https://jitpack.io'
+	}
     maven {
         url = 'https://maven.parchmentmc.org'
-    }
-    maven {
-        url = 'https://jitpack.io'
     }
     maven {
         url = 'https://maven.fallenbreath.me/releases'
