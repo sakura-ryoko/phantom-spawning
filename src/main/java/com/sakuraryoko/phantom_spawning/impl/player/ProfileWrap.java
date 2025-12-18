@@ -45,4 +45,9 @@ public class ProfileWrap
 		return profile.getName();
 //#endif
 	}
+
+	public static GameProfile profile(UUID id, String name)
+	{
+		return new GameProfile(id, name);
+	}
 }

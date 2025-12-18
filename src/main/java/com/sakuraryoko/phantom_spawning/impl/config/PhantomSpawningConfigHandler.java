@@ -30,7 +30,9 @@ import com.sakuraryoko.phantom_spawning.impl.PhantomSpawningMod;
 import com.sakuraryoko.phantom_spawning.impl.Reference;
 import com.sakuraryoko.phantom_spawning.impl.config.data.PhantomSpawningData;
 import com.sakuraryoko.phantom_spawning.impl.config.data.options.MainOptions;
+import com.sakuraryoko.phantom_spawning.impl.config.data.options.PlayerOptions;
 import com.sakuraryoko.phantom_spawning.impl.modinit.PhantomSpawningInit;
+import com.sakuraryoko.phantom_spawning.impl.player.PlayerManager;
 
 @ApiStatus.Internal
 public class PhantomSpawningConfigHandler implements IConfigDispatch
@@ -141,7 +143,10 @@ public class PhantomSpawningConfigHandler implements IConfigDispatch
 
 		// Copy Incoming Config
 		CONFIG.PLAYERS.clear();
-		CONFIG.PLAYERS.addAll(newConf.PLAYERS);
+		newConf.PLAYERS.forEach(
+				player ->
+						CONFIG.PLAYERS.add(new PlayerOptions(player))
+		);      // Deep copy
 
 		return CONFIG;
 	}
@@ -162,6 +167,12 @@ public class PhantomSpawningConfigHandler implements IConfigDispatch
 				PhantomSpawningMod.LOGGER.info("Phantom spawning debug is disabled for all players");
 			}
 		}
+
+		// Load data into Player Manager.
+		CONFIG.PLAYERS.forEach(
+				player ->
+						PlayerManager.getInstance().syncFromConfig(player)
+		);
 
 		// Do this when the Config gets finalized.
 		PhantomSpawningMod.debugLog("PhantomSpawningConfigHandler#execute(): new config_date: {}", CONFIG.config_date);

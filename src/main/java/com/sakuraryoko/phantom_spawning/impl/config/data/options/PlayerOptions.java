@@ -41,6 +41,12 @@ public class PlayerOptions implements IConfigOption
 		this.defaults();
 	}
 
+	public PlayerOptions(PlayerOptions other)
+	{
+		this.defaults();
+		this.copy(other);
+	}
+
 	@Override
 	public void defaults()
 	{

@@ -71,6 +71,11 @@ public class PlayerManager
 		this.addConfig(profile);
 	}
 
+	public void syncFromConfig(PlayerOptions opt)
+	{
+		this.addOrUpdateProfile(ProfileWrap.profile(opt.uuid, opt.name), opt.phantomSpawning);
+	}
+
 	private void addOrUpdateProfile(GameProfile profile, boolean toggle)
 	{
 		UUID uuid = ProfileWrap.id(profile);
@@ -83,6 +88,7 @@ public class PlayerManager
 		else if (!this.playerMap.containsKey(uuid))
 		{
 			this.playerMap.put(uuid, toggle);
+			this.checkOrUpdateFromConfig(profile);
 		}
 
 		this.debugMap.put(uuid, false);
@@ -90,6 +96,22 @@ public class PlayerManager
 		if (ConfigWrap.mainOpt().phantomDebug)
 		{
 			PhantomSpawningMod.LOGGER.warn("addOrUpdateProfile: player: ['{}'/{}] status: {}", ProfileWrap.name(profile), ProfileWrap.id(profile), toggle);
+		}
+	}
+
+	private void checkOrUpdateFromConfig(GameProfile profile)
+	{
+		List<PlayerOptions> config = new ArrayList<>(ConfigWrap.players());
+		UUID uuid = ProfileWrap.id(profile);
+		boolean status = this.getPhantomStatus(uuid);
+
+		for (PlayerOptions opt : config)
+		{
+			if (opt.uuid.equals(uuid) && opt.phantomSpawning != status)
+			{
+				this.setPhantomStatus(profile, opt.phantomSpawning);
+				return;
+			}
 		}
 	}
 

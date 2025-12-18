@@ -24,6 +24,7 @@
     ],
     "depends": {
         "fabricloader": ">=0.11.4",
+        "fabric-api": "*",
         "corelib": "*",
         "minecraft": "${minecraft_dependency}"
     }
