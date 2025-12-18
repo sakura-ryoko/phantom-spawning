@@ -151,6 +151,18 @@ public class PhantomSpawningConfigHandler implements IConfigDispatch
 	{
 		PhantomSpawningMod.debugLog("PhantomSpawningConfigHandler#execute(): Execute config.");
 
+		if (!fromInit)
+		{
+			if (CONFIG.MAIN.phantomDebug)
+			{
+				PhantomSpawningMod.LOGGER.info("Phantom spawning debug is enabled for all players");
+			}
+			else
+			{
+				PhantomSpawningMod.LOGGER.info("Phantom spawning debug is disabled for all players");
+			}
+		}
+
 		// Do this when the Config gets finalized.
 		PhantomSpawningMod.debugLog("PhantomSpawningConfigHandler#execute(): new config_date: {}", CONFIG.config_date);
 	}

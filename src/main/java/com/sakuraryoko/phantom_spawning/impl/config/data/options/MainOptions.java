@@ -28,6 +28,7 @@ import com.sakuraryoko.corelib.api.config.IConfigOption;
 public class MainOptions implements IConfigOption
 {
 	public int permission_level;
+	public int permission_level_admin;
 	public boolean phantomDebug;
 
 	public MainOptions()
@@ -39,6 +40,7 @@ public class MainOptions implements IConfigOption
 	public void defaults()
 	{
 		this.permission_level = 0;
+		this.permission_level_admin = 3;
 		this.phantomDebug = false;
 	}
 
@@ -47,6 +49,7 @@ public class MainOptions implements IConfigOption
 	{
 		MainOptions opts = (MainOptions) opt;
 		this.permission_level = opts.permission_level;
+		this.permission_level_admin = opts.permission_level_admin;
 		this.phantomDebug = opts.phantomDebug;
 
 		return this;

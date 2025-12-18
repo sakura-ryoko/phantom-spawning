@@ -28,6 +28,7 @@ import com.mojang.authlib.GameProfile;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.phys.Vec3;
 
 import com.sakuraryoko.corelib.api.events.IPlayerEventsDispatch;
 import com.sakuraryoko.phantom_spawning.impl.PhantomSpawningMod;
@@ -73,7 +74,7 @@ public class PlayerEventsHandler implements IPlayerEventsDispatch
 	@Override
 	public void onPlayerLeave(ServerPlayer player)
 	{
-		// NO-OP
+		PlayerManager.getInstance().syncProfile(player.getGameProfile());
 	}
 
 	@Override
@@ -101,29 +102,46 @@ public class PlayerEventsHandler implements IPlayerEventsDispatch
 			return currentValue;
 		}
 
+		boolean debug = PlayerManager.getInstance().getDebugStatus(player.getGameProfile());
+
 		if (!PlayerManager.getInstance().getPhantomStatus(player.getGameProfile()))
 		{
 			// Phantoms can only Spawn when the value is over 72000; and then has a random chance to hit.
-			if (currentValue >= 72000)
+			if (currentValue >= 71000)
 			{
-				if (ConfigWrap.mainOpt().phantomDebug)
+				if (ConfigWrap.mainOpt().phantomDebug || debug)
 				{
-					PhantomSpawningMod.LOGGER.info("[DISABLED] Player: '{}' may have been spared from phantom spawns. [{} -> 1]", player.getName().getString(), currentValue);
+					PhantomSpawningMod.LOGGER.warn("onCheckBypassInsomnia: Player: ['{}'/false] - may have been spared from phantom spawns [{} -> 1]", player.getName().getString(), currentValue);
 				}
 
 				return 1;
 			}
 
-			if (ConfigWrap.mainOpt().phantomDebug)
+			if (ConfigWrap.mainOpt().phantomDebug || debug)
 			{
-				PhantomSpawningMod.LOGGER.info("[DISABLED] Player: '{}' -- Current Value: [{}]", player.getName().getString(), currentValue);
+				PhantomSpawningMod.LOGGER.warn("onCheckBypassInsomnia: Player: ['{}'/false] - current value: [{}]", player.getName().getString(), currentValue);
 			}
 		}
-		else if (ConfigWrap.mainOpt().phantomDebug)
+		else if (ConfigWrap.mainOpt().phantomDebug || debug)
 		{
-			PhantomSpawningMod.LOGGER.info("[ENABLED] Player: '{}' -- Current Value: [{}]", player.getName().getString(), currentValue);
+			PhantomSpawningMod.LOGGER.warn("onCheckBypassInsomnia: Player: ['{}'/true] - current value: [{}]", player.getName().getString(), currentValue);
 		}
 
 		return currentValue;
+	}
+
+	public void onPhantomSpawn(ServerPlayer player, int count)
+	{
+		if (ConfigWrap.mainOpt().phantomDebug || PlayerManager.getInstance().getDebugStatus(player.getUUID()))
+		{
+			boolean status = PlayerManager.getInstance().getPhantomStatus(player.getGameProfile());
+			Vec3 loc = player.position();
+
+			PhantomSpawningMod.LOGGER.warn("onPhantomSpawn: Target: ['{}'/{}] -- [{}] phantoms spawned near [{}, {}, {}]",
+			                               player.getName().getString(),
+			                               status, count,
+			                               (int) loc.x, (int) loc.y, (int) loc.z
+			);
+		}
 	}
 }
