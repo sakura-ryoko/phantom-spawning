@@ -361,7 +361,7 @@ public class PhantomSpawningAdminCommand implements IServerCommand
 		PlayerList list = ctx.getSource().getServer().getPlayerList();
 		int count = 0;
 
-		text.append("§9Showing all at-risk players for Phantom Spawning:§r\n");
+		text.append("§9Showing all at-risk players:§r\n");
 
 		for (ServerPlayer player : list.getPlayers())
 		{
@@ -542,7 +542,7 @@ public class PhantomSpawningAdminCommand implements IServerCommand
 
 		final Component text = toggle
 		                       ? InitWrap.text().formatText("§dPhantom spawning debug enabled for all players§r")
-		                       : InitWrap.text().formatText("§bPhantom spawning debug for all players§r");
+		                       : InitWrap.text().formatText("§bPhantom spawning debug disabled for all players§r");
 
 		//#if MC >= 1.20.1
 		//$$ ctx.getSource().sendSuccess(() -> text, false);
