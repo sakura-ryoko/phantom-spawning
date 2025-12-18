@@ -146,7 +146,8 @@ public class PlayerManager
 
 		for (PlayerOptions entry : config)
 		{
-			if (entry.uuid.equals(ProfileWrap.id(profile)))
+			if (entry.uuid.equals(ProfileWrap.id(profile)) &&
+				entry.phantomSpawning != toggle)
 			{
 				entry.phantomSpawning = toggle;
 				dirty = true;
