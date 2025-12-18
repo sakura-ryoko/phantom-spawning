@@ -156,7 +156,11 @@ public class PlayerManager
 		if (dirty)
 		{
 			ConfigWrap.players().clear();
-			ConfigWrap.players().addAll(config);
+
+			for (PlayerOptions entry : config)
+			{
+				ConfigWrap.players().add(new PlayerOptions(entry));
+			}
 		}
 	}
 
