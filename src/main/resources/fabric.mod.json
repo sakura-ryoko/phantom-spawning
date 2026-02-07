@@ -2,17 +2,20 @@
     "schemaVersion": 1,
     "id": "${id}",
     "version": "${version}",
+
     "name": "${name}",
     "description": "Per-Player Phantom Spawning config tool",
     "authors": [
-        "Sakura-Ryoko"
+        "sakura-ryoko"
     ],
     "contact": {
         "homepage": "https://modrinth.com/mod/phantom-spawning",
         "sources": "https://github.com/sakura-ryoko/phantom-spawning",
         "issues": "https://github.com/sakura-ryoko/phantom-spawning/issues"
     },
+
     "icon": "assets/phantom-spawning/icon.png",
+
     "environment": "*",
     "entrypoints": {
         "main": [
@@ -22,9 +25,10 @@
     "mixins": [
         "phantom-spawning.mixins.json"
     ],
+    "accessWidener": "phantom-spawning.accesswidener",
+
     "depends": {
         "fabricloader": ">=0.11.4",
-        "fabric-api": "*",
         "corelib": "*",
         "minecraft": "${minecraft_dependency}"
     }

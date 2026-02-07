@@ -1,27 +1,29 @@
+final int mcVersion = project.mcVersion
+final boolean unobfuscated = mcVersion >= 26_00_00
+
 apply plugin: 'maven-publish'
 apply plugin: 'com.github.hierynomus.license'
-apply plugin: 'fabric-loom'
+apply plugin: unobfuscated ? 'net.fabricmc.fabric-loom' : 'net.fabricmc.fabric-loom-remap'
 apply plugin: 'com.replaymod.preprocess'
 //apply plugin: 'me.fallenbreath.yamlang'
 
-int mcVersion = project.mcVersion
-
 repositories {
-	maven {
-		url = 'https://jitpack.io'
+	maven {url = 'https://maven.parchmentmc.org'
+		content { includeGroupAndSubgroups("org.parchmentmc.data") }
 	}
-    maven {
-        url = 'https://maven.parchmentmc.org'
-    }
-    maven {
-        url = 'https://maven.fallenbreath.me/releases'
-    }
-    maven {
-        url = "https://oss.sonatype.org/content/repositories/snapshots"
-    }
-    maven {
-        url = "https://maven.nucleoid.xyz/"
-    }
+	maven {url = 'https://maven.fallenbreath.me/releases'
+		content { includeGroupAndSubgroups("me.fallenbreath") }
+	}
+	maven { url = 'https://maven.terraformersmc.com/releases/'
+		content { includeGroupAndSubgroups("com.terraformersmc") }
+	}
+	maven {url = "https://oss.sonatype.org/content/repositories/snapshots"
+		content { includeGroupAndSubgroups("me.lucko") }
+	}
+	maven {url = 'https://maven.nucleoid.xyz' }
+	maven { url = 'https://jitpack.io'
+		content { includeGroupAndSubgroups('com.github') }
+	}
 }
 
 // https://github.com/FabricMC/fabric-loader/issues/783
@@ -30,53 +32,74 @@ configurations {
 }
 
 dependencies {
+	def processDependency = { dep ->
+		// https://github.com/FabricMC/fabric-loader/issues/783
+		if (dep instanceof ModuleDependency) {
+			if (!(dep.group == 'net.fabricmc' && dep.name == 'fabric-loader')) {
+				dep.exclude group: 'net.fabricmc', module: 'fabric-loader'
+			}
+		}
+		return dep
+	}
+	def autoImplementation = { Object... args -> processDependency(unobfuscated ? implementation(*args) : modImplementation(*args)) }
+	def autoRuntimeOnly = { Object... args -> processDependency(unobfuscated ? runtimeOnly(*args) : modRuntimeOnly(*args)) }
+	def autoCompileOnly = { Object... args -> processDependency(unobfuscated ? compileOnly(*args) : modCompileOnly(*args)) }
+
 	// loom
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings loom.layered() {
-		officialMojangMappings()
-		if (project.parchment_version.size() > 0) {
-			parchment("org.parchmentmc.data:parchment-${project.minecraft_version}:${project.parchment_version}@zip")
+	if (!unobfuscated) {
+		mappings loom.layered() {
+			officialMojangMappings()
+			if (project.parchment_version.size() > 0) {
+				parchment("org.parchmentmc.data:parchment-${project.minecraft_version}:${project.parchment_version}@zip")
+			}
 		}
 	}
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	autoImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-    // External Dependencies
-    implementation "com.google.code.findbugs:jsr305:3.0.2"
+	// debuggers
+	autoImplementation "org.jspecify:jspecify:1.0.0"
+	autoImplementation "com.google.code.findbugs:jsr305:3.0.2"
 
 	// runtime mods
 //	if (mcVersion < 11904) {
-//		modRuntimeOnly(mcVersion < 11900 ? "com.github.astei:lazydfu:0.1.2" : "com.github.Fallen-Breath:lazydfu:a7cfc44c0c")
+//		autoRuntimeOnly(mcVersion < 11900 ? "com.github.astei:lazydfu:0.1.2" : "com.github.Fallen-Breath:lazydfu:a7cfc44c0c")
 //	}
-//	// [FEATURE] MIXIN_AUDITOR
-//	modRuntimeOnly 'me.fallenbreath:mixin-auditor:0.1.0'
+	// [FEATURE] MIXIN_AUDITOR
+//	autoRuntimeOnly "me.fallenbreath:mixin-auditor:0.2.0-${unobfuscated ? 'u' : 'o'}"
 
 	// dependencies
-	def fabricApiModules = ["fabric-resource-loader-v0"]
-	if (mcVersion >= 12105) {  // "fabric-resource-loader-v0" dependency since fabric api 0.117.0 (25w07a, mc1.21.5 snapshot)
-		fabricApiModules.add("fabric-api-base")
-	}
-	if (mcVersion >= 12109) {  // "fabric-resource-loader-v0" dependency since fabric api 0.133.11 (1.21.9-rc1)
-		fabricApiModules.add("fabric-resource-loader-v1")
-	}
-//	fabricApiModules.forEach {
-//		include(modImplementation(fabricApi.module(it, project.fabric_api_version)))
+//	def fabricApiModules = []
+//	if (mcVersion >= 12105) {  // "fabric-resource-loader-v0" dependency since fabric api 0.117.0 (25w07a, mc1.21.5 snapshot)
+//		fabricApiModules.add("fabric-api-base")
 //	}
-//	include(modImplementation("me.fallenbreath:conditional-mixin-fabric:${project.conditionalmixin_version}"))
+//	if (mcVersion < 12111) {  // "fabric-resource-loader" is fully moved from v0 to v1 since fabric api 0.139.3 (1.21.11-pre4)
+//		fabricApiModules.add("fabric-resource-loader-v0")
+//	}
+//	if (mcVersion >= 12109) {  // "fabric-resource-loader-v0" dependency since fabric api 0.133.11 (1.21.9-rc1)
+//		fabricApiModules.add("fabric-resource-loader-v1")
+//	}
+//	fabricApiModules.forEach {
+//		include(autoImplementation(fabricApi.module(it, project.fabric_api_version)))
+//	}
+	include(autoImplementation("me.fallenbreath:conditional-mixin-fabric:${project.conditionalmixin_version}"))
 	if (mcVersion < 12005) {
 		include("io.github.llamalad7:mixinextras-fabric:${project.mixinextras_version}")
 	}
 
     // Mod Specific
-    modImplementation include("com.github.sakura-ryoko.corelib:corelib-mc${project.minecraft_version}:${project.corelib_version}")
+	autoImplementation include("com.github.sakura-ryoko.corelib:corelib-mc${project.minecraft_version}:${project.corelib_version}")
     if (project.fabric_permissions_api_version.size() > 0) {
-        modImplementation include("me.lucko:fabric-permissions-api:${project.fabric_permissions_api_version}")
+		autoImplementation include("me.lucko:fabric-permissions-api:${project.fabric_permissions_api_version}")
     }
 }
 
 String MIXIN_CONFIG_PATH = 'phantom-spawning.mixins.json'
 //String LANG_DIR = 'assets/phantom-spawning/lang'
 JavaVersion JAVA_COMPATIBILITY
-if (mcVersion >= 12005) {
+if (mcVersion >= 260000) {
+	JAVA_COMPATIBILITY = JavaVersion.VERSION_25
+} else if (mcVersion >= 12005) {
 	JAVA_COMPATIBILITY = JavaVersion.VERSION_21
 } else if (mcVersion >= 11800) {
 	JAVA_COMPATIBILITY = JavaVersion.VERSION_17
@@ -98,12 +121,19 @@ loom {
 	// [FEATURE] MIXIN_AUDITOR
 //	runs {
 //		def auditVmArgs = [*commonVmArgs, '-DmixinAuditor.audit=true']
+//		clientMixinAudit {
+//			client()
+//			vmArgs auditVmArgs
+//			ideConfigGenerated false
+//		}
 //		serverMixinAudit {
 //			server()
 //			vmArgs auditVmArgs
 //			ideConfigGenerated false
 //		}
 //	}
+
+	accessWidenerPath = file("src/main/resources/phantom-spawning.accesswidener")
 }
 
 String modVersionSuffix = ''
@@ -143,19 +173,16 @@ version = fullProjectVersion
 // See https://youtrack.jetbrains.com/issue/IDEA-296490
 // if IDEA complains about "Cannot resolve resource filtering of MatchingCopyAction" and you want to know why
 processResources {
-	inputs.property "id", project.mod_id
-	inputs.property "name", project.mod_name
-	inputs.property "version", fullModVersion
-	inputs.property "minecraft_dependency", project.minecraft_dependency
+	def modProperties = [
+			"id"                  : project.mod_id,
+			"name"                : project.mod_name,
+			"version"             : fullModVersion,
+			"minecraft_dependency": project.minecraft_dependency,
+	]
+	inputs.properties(modProperties)
 
 	filesMatching("fabric.mod.json") {
-		def valueMap = [
-				"id": project.mod_id,
-				"name": project.mod_name,
-				"version": fullModVersion,
-				"minecraft_dependency": project.minecraft_dependency,
-		]
-		expand valueMap
+		expand modProperties
 	}
 
 	filesMatching(MIXIN_CONFIG_PATH) {
@@ -192,8 +219,9 @@ java {
 }
 
 jar {
+	inputs.property "archives_base_name", project.archives_base_name
 	from(rootProject.file('LICENSE')) {
-		rename { "${it}_${project.archives_base_name}" }
+		rename { "${it}_${inputs.properties.archives_base_name}" }
 	}
 }
 
@@ -245,6 +273,9 @@ publishing {
 	// select the repositories you want to publish to
 	repositories {
 		// mavenLocal()
+		maven {
+			url = "$projectDir/../../CommonMaven"
+		}
 
 //		// [FEATURE] FALLENS_MAVEN
 //		maven {

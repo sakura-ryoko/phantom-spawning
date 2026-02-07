@@ -30,6 +30,7 @@ import com.sakuraryoko.corelib.impl.config.ConfigManager;
 import com.sakuraryoko.corelib.impl.text.BuiltinTextHandler;
 import com.sakuraryoko.phantom_spawning.impl.PhantomSpawningMod;
 import com.sakuraryoko.phantom_spawning.impl.Reference;
+import com.sakuraryoko.phantom_spawning.impl.commands.BatSpawningCommand;
 import com.sakuraryoko.phantom_spawning.impl.commands.PhantomSpawningAdminCommand;
 import com.sakuraryoko.phantom_spawning.impl.commands.PhantomSpawningCommand;
 import com.sakuraryoko.phantom_spawning.impl.config.ConfigWrap;
@@ -100,6 +101,7 @@ public class PhantomSpawningInit implements IModInitDispatcher
 		PhantomSpawningMod.debugLog("Command(s) Initializing.");
 		CommandManager.getInstance().registerCommandHandler(PhantomSpawningCommand.getInstance());
 		CommandManager.getInstance().registerCommandHandler(PhantomSpawningAdminCommand.getInstance());
+		CommandManager.getInstance().registerCommandHandler(BatSpawningCommand.getInstance());
 
 		this.INIT = true;
 	}

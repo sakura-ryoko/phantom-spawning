@@ -23,6 +23,7 @@ package com.sakuraryoko.phantom_spawning.impl.config;
 import java.util.List;
 import org.jetbrains.annotations.ApiStatus;
 
+import com.sakuraryoko.phantom_spawning.impl.config.data.options.BatOptions;
 import com.sakuraryoko.phantom_spawning.impl.config.data.options.MainOptions;
 import com.sakuraryoko.phantom_spawning.impl.config.data.options.PlayerOptions;
 
@@ -32,6 +33,11 @@ public class ConfigWrap
 	public static MainOptions mainOpt()
 	{
 		return PhantomSpawningConfigHandler.getInstance().getConfig().MAIN;
+	}
+
+	public static BatOptions batOpt()
+	{
+		return PhantomSpawningConfigHandler.getInstance().getConfig().BATS;
 	}
 
 	public static List<PlayerOptions> players()

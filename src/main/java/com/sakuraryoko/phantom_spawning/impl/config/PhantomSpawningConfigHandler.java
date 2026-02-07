@@ -138,10 +138,11 @@ public class PhantomSpawningConfigHandler implements IConfigDispatch
 		CONFIG.config_date = TimeFormat.RFC1123.formatNow(null);
 		PhantomSpawningMod.debugLog("PhantomSpawningConfigHandler#update(): save_date: {} --> {}", newConf.config_date, CONFIG.config_date);
 
-		// Copy Main Config
+		// Copy Main/Bats Config
 		CONFIG.MAIN.copy(newConf.MAIN);
+		CONFIG.BATS.copy(newConf.BATS);
 
-		// Copy Incoming Config
+		// Copy Players Config
 		CONFIG.PLAYERS.clear();
 		newConf.PLAYERS.forEach(
 				player ->
