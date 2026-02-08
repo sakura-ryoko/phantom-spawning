@@ -2,10 +2,12 @@
     "required": true,
     "minVersion": "0.8",
     "package": "com.sakuraryoko.phantom_spawning.impl.mixins",
+    "plugin": "com.sakuraryoko.phantom_spawning.impl.compat.mixin.PhantomSpawningMixinConfigPlugin",
     "compatibilityLevel": "{{COMPATIBILITY_LEVEL}}",
     "mixins": [
         "MixinBat",
-        "MixinMobCategory",
+        "MixinMobCategory_init",
+        "MixinMobCategory_mobCapHelper",
         "MixinNaturalSpawner_SpawnState",
         "MixinPhantomSpawner",
         "MixinServerChunkCache"

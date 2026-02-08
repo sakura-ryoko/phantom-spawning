@@ -29,11 +29,12 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
 import com.sakuraryoko.corelib.api.util.MathUtils;
+import com.sakuraryoko.phantom_spawning.impl.PhantomSpawningMod;
 import com.sakuraryoko.phantom_spawning.impl.config.ConfigWrap;
 import com.sakuraryoko.phantom_spawning.impl.config.data.options.BatOptions;
 import com.sakuraryoko.phantom_spawning.impl.config.data.options.BatOptionsLimits;
 
-@Mixin(NaturalSpawner.SpawnState.class)
+@Mixin(value = NaturalSpawner.SpawnState.class)
 public class MixinNaturalSpawner_SpawnState
 {
 	@WrapOperation(method = "canSpawnForCategory(Lnet/minecraft/world/entity/MobCategory;)Z",
@@ -43,13 +44,15 @@ public class MixinNaturalSpawner_SpawnState
 	{
 		final int orig = instance.getMaxInstancesPerChunk();
 		BatOptions opts = ConfigWrap.batOpt();
+		int adj = orig;
 
 		if (instance.getName().equals(MobCategory.AMBIENT.getName()) &&
 			opts.enableBatConfig && opts.setPerChunkAmbientMobCap != orig)
 		{
-			return MathUtils.clamp(opts.setPerChunkAmbientMobCap, BatOptionsLimits.MIN_CAP, BatOptionsLimits.MAX_CAP);
+			adj = MathUtils.clamp(opts.setPerChunkAmbientMobCap, BatOptionsLimits.MIN_CAP, BatOptionsLimits.MAX_CAP);
+			PhantomSpawningMod.LOGGER.warn("[SpawnState]: getMaxInstancesPerChunk() orig: [{}] --> adj: [{}]", orig, adj);
 		}
 
-		return orig;
+		return adj;
 	}
 }

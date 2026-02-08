@@ -33,6 +33,7 @@ import com.sakuraryoko.corelib.api.util.MathUtils;
 //#if MC >= 1.16.5
 //$$ import com.sakuraryoko.corelib.impl.util.MixinDummy;
 //#endif
+import com.sakuraryoko.phantom_spawning.impl.PhantomSpawningMod;
 import com.sakuraryoko.phantom_spawning.impl.config.ConfigWrap;
 import com.sakuraryoko.phantom_spawning.impl.config.data.options.BatOptions;
 import com.sakuraryoko.phantom_spawning.impl.config.data.options.BatOptionsLimits;
@@ -47,13 +48,15 @@ public class MixinServerChunkCache
 	{
 		BatOptions opts = ConfigWrap.batOpt();
 		final int orig = instance.getMaxInstancesPerChunk();
+		int adj = orig;
 
 		if (Objects.equals(instance.getName(), MobCategory.AMBIENT.getName()) &&
 			opts.enableBatConfig && orig != opts.setPerChunkAmbientMobCap)
 		{
-			return MathUtils.clamp(opts.setPerChunkAmbientMobCap, BatOptionsLimits.MIN_CAP, BatOptionsLimits.MAX_CAP);
+			adj = MathUtils.clamp(opts.setPerChunkAmbientMobCap, BatOptionsLimits.MIN_CAP, BatOptionsLimits.MAX_CAP);
+			PhantomSpawningMod.LOGGER.warn("[ServerChunkCache]: getMaxInstancesPerChunk() orig: [{}] --> adj: [{}]", orig, adj);
 		}
 
-		return orig;
+		return adj;
 	}
 }

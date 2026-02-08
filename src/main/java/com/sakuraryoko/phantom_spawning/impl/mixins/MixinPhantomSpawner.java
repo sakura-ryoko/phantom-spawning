@@ -51,7 +51,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.sakuraryoko.phantom_spawning.impl.events.PlayerEventsHandler;
 
-@Mixin(value = PhantomSpawner.class, priority = 1050)
+@Mixin(value = PhantomSpawner.class)
 @ApiStatus.Internal
 public class MixinPhantomSpawner
 {

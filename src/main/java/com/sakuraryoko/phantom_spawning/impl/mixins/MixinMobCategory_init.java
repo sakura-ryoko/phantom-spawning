@@ -21,10 +21,7 @@
 package com.sakuraryoko.phantom_spawning.impl.mixins;
 
 import java.util.Objects;
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import org.jetbrains.annotations.ApiStatus;
-import org.objectweb.asm.Opcodes;
 
 import net.minecraft.world.entity.MobCategory;
 import org.spongepowered.asm.mixin.Final;
@@ -39,9 +36,9 @@ import com.sakuraryoko.phantom_spawning.impl.config.ConfigWrap;
 import com.sakuraryoko.phantom_spawning.impl.config.data.options.BatOptions;
 import com.sakuraryoko.phantom_spawning.impl.config.data.options.BatOptionsLimits;
 
-@Mixin(value = MobCategory.class, priority = 1500)
+@Mixin(value = MobCategory.class, priority = 900)
 @ApiStatus.Internal
-public class MixinMobCategory
+public class MixinMobCategory_init
 {
 	@Mutable @Shadow @Final private int max;
 
@@ -63,32 +60,15 @@ public class MixinMobCategory
 	//#if MC >= 1.16.5
 	//$$ private void ps$overrideAmbientMax_Init(String string, int i, String name, int max, boolean isFriendly, boolean isPersistent, int despawnDistance, CallbackInfo ci)
 	//#else
-	private void ps$overrideAmbientMax_Init(String string, int i, String name, int max, boolean bl, boolean bl2, CallbackInfo ci)
+	private void ps$overrideAmbientMax_Init(String string, int i, String name, int max, boolean isFriendly, boolean isPersistent, CallbackInfo ci)
 	//#endif
 	{
 		BatOptions opts = ConfigWrap.batOpt();
 
 		if (Objects.equals(name.toLowerCase(), "ambient") &&
-			opts.enableBatConfig && opts.setPerChunkAmbientMobCap != i)
+			opts.enableBatConfig && opts.setPerChunkAmbientMobCap != max)
 		{
 			this.max = MathUtils.clamp(opts.setPerChunkAmbientMobCap, BatOptionsLimits.MIN_CAP, BatOptionsLimits.MAX_CAP);
 		}
-	}
-
-	@WrapOperation(method = "getMaxInstancesPerChunk()I",
-	               at = @At(value = "FIELD",
-	                        target = "Lnet/minecraft/world/entity/MobCategory;max:I",
-	                        opcode = Opcodes.GETFIELD))
-	private int ps$overrideAmbientMax(MobCategory instance, Operation<Integer> original)
-	{
-		BatOptions opts = ConfigWrap.batOpt();
-
-		if (instance.equals(MobCategory.AMBIENT) &&
-				opts.enableBatConfig && opts.setPerChunkAmbientMobCap != this.max)
-		{
-			return MathUtils.clamp(opts.setPerChunkAmbientMobCap, BatOptionsLimits.MIN_CAP, BatOptionsLimits.MAX_CAP);
-		}
-
-		return this.max;
 	}
 }

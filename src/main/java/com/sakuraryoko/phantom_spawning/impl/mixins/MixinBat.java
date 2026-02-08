@@ -42,7 +42,7 @@ import com.sakuraryoko.phantom_spawning.impl.config.ConfigWrap;
 import com.sakuraryoko.phantom_spawning.impl.config.data.options.BatOptions;
 import com.sakuraryoko.phantom_spawning.impl.config.data.options.BatOptionsLimits;
 
-@Mixin(value = Bat.class, priority = 1010)
+@Mixin(value = Bat.class)
 @ApiStatus.Internal
 public abstract class MixinBat
 {

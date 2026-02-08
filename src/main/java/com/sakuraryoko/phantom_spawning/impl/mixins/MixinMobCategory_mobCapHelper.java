@@ -20,13 +20,15 @@
 
 package com.sakuraryoko.phantom_spawning.impl.mixins;
 
+import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.level.NaturalSpawner;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.Mutable;
+import org.spongepowered.asm.mixin.Shadow;
 
 import com.sakuraryoko.corelib.api.util.MathUtils;
 import com.sakuraryoko.phantom_spawning.impl.PhantomSpawningMod;
@@ -34,25 +36,28 @@ import com.sakuraryoko.phantom_spawning.impl.config.ConfigWrap;
 import com.sakuraryoko.phantom_spawning.impl.config.data.options.BatOptions;
 import com.sakuraryoko.phantom_spawning.impl.config.data.options.BatOptionsLimits;
 
-@Mixin(value = NaturalSpawner.SpawnState.class)
-public class MixinNaturalSpawner_SpawnState
+@Mixin(value = MobCategory.class, priority = 990)
+@ApiStatus.Internal
+//@Restriction(conflict = @Condition(value = ModIds.carpet))
+public class MixinMobCategory_mobCapHelper
 {
-	@WrapOperation(method = "canSpawnForCategory(Lnet/minecraft/world/entity/MobCategory;Lnet/minecraft/world/level/ChunkPos;)Z",
-	               at = @At(value = "INVOKE",
-						target = "Lnet/minecraft/world/entity/MobCategory;getMaxInstancesPerChunk()I"))
-	private int ps$onCheckMobCap_Spawner(MobCategory instance, Operation<Integer> original)
-	{
-		final int orig = instance.getMaxInstancesPerChunk();
-		BatOptions opts = ConfigWrap.batOpt();
-		int adj = orig;
+	@Mutable @Shadow @Final private int max;
+	@Shadow @Final private String name;
 
-		if (instance.getName().equals(MobCategory.AMBIENT.getName()) &&
-			opts.enableBatConfig && opts.setPerChunkAmbientMobCap != orig)
+	@WrapMethod(method = "getMaxInstancesPerChunk()I")
+	private int ps$overrideAmbientMax(Operation<Integer> original)
+	{
+		BatOptions opts = ConfigWrap.batOpt();
+
+		if (this.name.equalsIgnoreCase(MobCategory.AMBIENT.getName()) &&
+			opts.enableBatConfig && opts.setPerChunkAmbientMobCap != this.max)
 		{
-			adj = MathUtils.clamp(opts.setPerChunkAmbientMobCap, BatOptionsLimits.MIN_CAP, BatOptionsLimits.MAX_CAP);
-			PhantomSpawningMod.LOGGER.warn("[SpawnState]: getMaxInstancesPerChunk() orig: [{}] --> adj: [{}]", orig, adj);
+			final int adj = MathUtils.clamp(opts.setPerChunkAmbientMobCap, BatOptionsLimits.MIN_CAP, BatOptionsLimits.MAX_CAP);
+			PhantomSpawningMod.LOGGER.warn("[MobCategory_helper]: getMaxInstancesPerChunk() orig: [{}] --> adj: [{}]", this.max, adj);
+			this.max = adj;
+			return adj;
 		}
 
-		return adj;
+		return this.max;
 	}
 }
