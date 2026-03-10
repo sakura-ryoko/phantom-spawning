@@ -16,4 +16,4 @@ The saved players will then be saved to the `config/phantom-spawning.json` file.
 
 **NEW**: Added the `/batspawning` command for Admins to control Bat Spawning.
 
-[![Join Sakura's RyokoCraft Discord](https://sakuraryoko.com/files/1398873/discord-300px.png)](https://discord.gg/njVWs6DF)
+[![Join Sakura's RyokoCraft Discord](https://sakuraryoko.com/files/1398873/discord-300px.png)](https://discord.gg/UPj2aU7d)
