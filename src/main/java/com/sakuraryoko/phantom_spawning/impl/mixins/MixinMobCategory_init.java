@@ -57,7 +57,9 @@ public class MixinMobCategory_init
 	}
 
 	@Inject(method = "<init>", at = @At("TAIL"))
-	//#if MC >= 1.16.5
+	//#if MC >= 26.2
+	//$$ private void ps$overrideAmbientMax_Init(String string, int i, String name, String abbr, int max, boolean isFriendly, boolean isPersistent, int despawnDistance, CallbackInfo ci)
+	//#elseif MC >= 1.16.5
 	//$$ private void ps$overrideAmbientMax_Init(String string, int i, String name, int max, boolean isFriendly, boolean isPersistent, int despawnDistance, CallbackInfo ci)
 	//#else
 	private void ps$overrideAmbientMax_Init(String string, int i, String name, int max, boolean isFriendly, boolean isPersistent, CallbackInfo ci)
