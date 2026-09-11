@@ -8,6 +8,7 @@ apply plugin: 'com.replaymod.preprocess'
 //apply plugin: 'me.fallenbreath.yamlang'
 
 repositories {
+	mavenLocal()
 	maven { url = 'https://maven.parchmentmc.org'
 		content { includeGroupAndSubgroups("org.parchmentmc.data") }
 	}
@@ -67,7 +68,7 @@ dependencies {
 //		autoRuntimeOnly(mcVersion < 11900 ? "com.github.astei:lazydfu:0.1.2" : "com.github.Fallen-Breath:lazydfu:a7cfc44c0c")
 //	}
 	// [FEATURE] MIXIN_AUDITOR
-//	autoRuntimeOnly "me.fallenbreath:mixin-auditor:0.2.0-${unobfuscated ? 'u' : 'o'}"
+	autoRuntimeOnly "me.fallenbreath:mixin-auditor:0.2.0-${unobfuscated ? 'u' : 'o'}"
 
 	// dependencies
 	def fabricApiModules = []
@@ -92,8 +93,9 @@ dependencies {
 //	autoCompileOnly "com.terraformersmc:modmenu:${project.mod_menu_version}"
 
     // Mod Specific
+//	autoImplementation include("com.github.sakura-ryoko:corelib:corelib-mc${project.minecraft_version}:${project.corelib_version}")
 //	autoImplementation include("com.github.sakura-ryoko.corelib:corelib-mc${project.minecraft_version}:${project.corelib_version}")
-	autoImplementation include("com.sakuraryoko:corelib:${project.corelib_version}-mc${project.minecraft_version}")
+	autoImplementation include("com.sakuraryoko:core-lib-api:${project.corelib_version}-mc${project.minecraft_version}-SNAPSHOT")
 	if (project.fabric_permissions_api_version.size() > 0) {
 		autoImplementation include("me.lucko:fabric-permissions-api:${project.fabric_permissions_api_version}")
     }
@@ -126,19 +128,19 @@ loom {
 		vmArgs commonVmArgs
 	}
 	// [FEATURE] MIXIN_AUDITOR
-//	runs {
-//		def auditVmArgs = [*commonVmArgs, '-DmixinAuditor.audit=true']
-//		clientMixinAudit {
-//			client()
-//			vmArgs auditVmArgs
-//			ideConfigGenerated false
-//		}
-//		serverMixinAudit {
-//			server()
-//			vmArgs auditVmArgs
-//			ideConfigGenerated false
-//		}
-//	}
+	runs {
+		def auditVmArgs = [*commonVmArgs, '-DmixinAuditor.audit=true']
+		clientMixinAudit {
+			client()
+			vmArgs auditVmArgs
+			ideConfigGenerated false
+		}
+		serverMixinAudit {
+			server()
+			vmArgs auditVmArgs
+			ideConfigGenerated false
+		}
+	}
 }
 
 // hack fix for a gradle 9.5 implicit_dependency issue

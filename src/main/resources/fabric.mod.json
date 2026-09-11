@@ -29,7 +29,7 @@
 
     "depends": {
         "fabricloader": ">=0.11.4",
-        "corelib": "*",
+        "core-lib-api": "*",
         "minecraft": "${minecraft_dependency}"
     }
 }
